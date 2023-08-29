@@ -25,13 +25,26 @@ analysis or custom losses.
 import gin.tf
 from models.film_net import interpolator as film_net_interpolator
 from models.film_net import options as film_net_options
+from typing import Optional
 
 import tensorflow as tf
 
 
 @gin.configurable('model')
-def create_model(name: str) -> tf.keras.Model:
-  """Creates the frame interpolation model based on given model name."""
+def create_model(name: str,
+                 load_path: Optional[str] = None) -> tf.keras.Model:
+  """Creates the frame interpolation model based on given model name.
+
+  Args:
+    name: Model name
+    load_path: Path to existing state of the model
+
+  Returns:
+    A tf.keras.Model instance
+  """
+  if load_path:
+      return tf.keras.models.load_model(load_path)
+
   if name == 'film_net':
     return _create_film_net_model()  # pylint: disable=no-value-for-parameter
   else:
